@@ -17,6 +17,7 @@ import {
   Route,
   Link,
 } from "react-router-dom";
+import FirebaseFirestore from './Profile';
 
 const promise =loadStripe("pk_test_51OJfLTSAUqwPqtXTzzwNw7WzCtq0RMS9OzkVYwd0UIVGuI4thO7vOwxRd2fGIjCXGBbzH8j6E7qqh5FJntm9Pb7200l9fgbI8Q");
 
@@ -98,6 +99,7 @@ function App() {
         </>
       }
       />
+      
 
       {/* <Route path='/login' element={0} /> */}
       {/* <Route path='/checkout' element={<Checkout/>} /> */}

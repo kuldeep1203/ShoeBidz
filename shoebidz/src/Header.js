@@ -75,6 +75,7 @@ function Header() {
         </span>
       </div>
 
+      <Link to = '/FirebaseStore'>
       <div className='header_option'>
           {/* Third icon */}
         <span className='header_optionLineOne'>
@@ -84,7 +85,7 @@ function Header() {
           Bidding
         </span>
       </div>
-
+      </Link>
      <Link to = '/checkout'>
      <div className='header_optionBasket'>
        <AddShoppingCartIcon />
