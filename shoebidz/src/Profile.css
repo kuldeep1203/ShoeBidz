@@ -1,32 +1,30 @@
-/* FirebaseFirestore.css */
+/* src/components/Profile.css */
+.container{
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
 
-.container {
-    max-width: 400px;
-    margin: auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  
-  .create_button,
-  .update_button,
-  .delete_button,
-  .Edit_button {
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-right: 10px;
-  }
-  
-  .create_button:hover,
-  .update_button:hover,
-  .delete_button:hover,
-  .Edit_button:hover {
-    background-color: #0056b3;
-  }
-  
+.profile-container {
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.profile-heading {
+  color: #ff4500;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.submit-button {
+  background-color: #1a1a1a;
+  color: #ff4500;
+  border: 2px solid #ff4500;
+  padding: 10px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #000000;
+  color: #ff4500;
+}

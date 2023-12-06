@@ -7,7 +7,7 @@ import Login from './Login';
 import {auth} from './firebase';
 import {useStateValue} from "./StateProvider";
 import Payment from './Payment';
-import Profile from './Profile';
+import Profile from './Profile.js';
 import Invoice from './Invoice';
 import {loadStripe} from "@stripe/stripe-js";
 import {Elements} from "@stripe/react-stripe-js";
@@ -17,7 +17,7 @@ import {
   Route,
   Link,
 } from "react-router-dom";
-import FirebaseFirestore from './Profile';
+import FirebaseFirestore from './Profile.js';
 
 const promise =loadStripe("pk_test_51OJfLTSAUqwPqtXTzzwNw7WzCtq0RMS9OzkVYwd0UIVGuI4thO7vOwxRd2fGIjCXGBbzH8j6E7qqh5FJntm9Pb7200l9fgbI8Q");
 
@@ -92,7 +92,7 @@ function App() {
         </>
       }
       />
-      <Route path='/Profile' element ={
+      <Route path='/Profile' component={Profile} element ={
         <>
           <Header/>
           <Profile/>

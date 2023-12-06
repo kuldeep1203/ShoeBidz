@@ -30,7 +30,7 @@ function Login() {
             // This means it successfully created a user with email and password
             console.log(auth);
             if(auth){
-                navigate("/");
+                navigate("/Profile");
             }
         })
         .catch(error => alert(error.message))

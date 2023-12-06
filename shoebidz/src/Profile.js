@@ -1,67 +1,135 @@
-import React, { useEffect, useState } from 'react'
-import './Profile.css'
-import { db } from './firebase'
-import "firebase/compat/database";
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { auth } from './firebase';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/database';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Profile.css';
 
-function Profile(){
-    const [fname,setFname] =useState('')
-    const [lname,setLname] =useState('')
-    const [id,setId] =useState('')
-    const [show,setShow] =useState(false)
-    const [val,setVal] =useState([])
-    const value = collection(db,"demo")
+const Profile = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [name, setName] = useState('');
+  const [age, setAge] = useState('');
+  const [email, setEmail] = useState('');
+  const [number, setNumber] = useState('');
+  const [address, setAddress] = useState('');
+  const [userDataExists, setUserDataExists] = useState(false);
 
-    useEffect(()=>{
-        const getData= async()=>{
-          const dbVal = await getDocs(value)
-          setVal(dbVal.docs.map(doc=>({...doc.data(),id:doc.id})))
-        }
-        getData()
-    })
+  useEffect(() => {
+    // Check if the user is logged in
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        // User is signed in
+        setUser(authUser);
+        // Fetch existing user data from Firebase
+        const userRef = firebase.database().ref(`users/${authUser.uid}`);
+        userRef.once('value', (snapshot) => {
+          const userData = snapshot.val();
+          if (userData) {
+            // User data exists
+            setUserDataExists(true);
+            setName(userData.name);
+            setAge(userData.age);
+            setEmail(userData.email);
+            setNumber(userData.number);
+            setAddress(userData.address);
+          } else {
+            // User data doesn't exist
+            setUserDataExists(false);
+          }
+        });
+      } else {
+        // User is signed out
+        setUser(null);
+        navigate('/'); // Redirect to the home page or authentication page
+      }
+    });
 
-    const handleCreate =async()=>{
-        await addDoc(value,{name1:fname,name2:lname})
-        setFname("")
-        setLname("")
-    }
+    return () => {
+      // Cleanup subscription on component unmount
+      unsubscribe();
+    };
+  }, [navigate]);
 
-    const handleDelete =async(id)=>{
-       const deleteVal =  doc(db,"demo",id)
-       await deleteDoc(deleteVal)
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleEdit =async(id,name1,name2)=>{
-        setFname(name1)
-        setLname(name2)
-        setId(id)
-        setShow(true)
-    }
+    // Push or update data to Firebase
+    const usersRef = firebase.database().ref(`users/${user.uid}`);
+    await usersRef.set({
+      name,
+      age,
+      email: user.email,
+      number,
+      address,
+    });
 
-    const handleUpdate =async()=>{
-        const updateData = doc(db,"demo",id)
-        await updateDoc(updateData,{name1:fname,name2:lname})
-        setShow(false)
-        setFname("")
-        setLname("")
-    }
+    // Redirect to the home page or any other route
+    navigate('/');
+  };
 
-    return(
-        <div className='container'>
-           <input value={fname} onChange={(e) => setFname(e.target.value)} />
-           <input value={lname} onChange={(e) => setLname(e.target.value)} />
-           {!show?<button className='create_button' onClick={handleCreate}>Create</button>:
-           <button className='update_button' onClick={handleUpdate}>Update</button>}
-           {
-            val.map(values=>
-            <div>
-                <h1>{values.name1}</h1>
-                <h1>{values.name2}</h1>
-                <button className='delete_button' onClick={()=>handleDelete(values.id)}>Delete</button>
-                <button className='Edit_button' onClick={()=>handleEdit(values.id,values.name1,values.name2)}>Edit</button>
-            </div>)
-           }
+  if (user) {
+    return (
+      <div className="container d-flex justify-content-center align-items-center vh-100">
+        <div className="profile-container p-4">
+          <h2 className="profile-heading">Profile Page</h2>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label className="form-label">Name:</label>
+              <input
+                type="text"
+                className="form-control"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Age:</label>
+              <input
+                type="number"
+                className="form-control"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Email:</label>
+              <input
+                type="text"
+                className="form-control"
+                value={email}
+                readOnly
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Number:</label>
+              <input
+                type="tel"
+                className="form-control"
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Address:</label>
+              <textarea
+                className="form-control"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+              />
+            </div>
+            <button type="submit" className="btn btn-danger">
+              Save Changes
+            </button>
+          </form>
         </div>
-    )
-}
+      </div>
+    );
+  }
+
+  // User is not signed in, you can redirect or render a login form
+  return <div>Please sign in to view your profile.</div>;
+};
+
 export default Profile;
